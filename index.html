@@ -4,373 +4,360 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hazem Gomaa — Flutter Developer</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #050a0e;
-    --surface: #0d1a24;
-    --border: #1a3040;
-    --flutter-blue: #54c5f8;
-    --flutter-cyan: #01b4e4;
-    --flutter-dark: #0175c2;
-    --text: #e8f4f8;
-    --muted: #5a8a9f;
+    --bg: #060810;
+    --surface: #0c1020;
+    --card: #101524;
+    --border: #1c2540;
+    --accent: #4fc3f7;
+    --accent2: #7c4dff;
+    --accent3: #00e5ff;
+    --text: #e8eaf6;
+    --muted: #546e8a;
+    --green: #00e676;
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
 
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'Syne', sans-serif;
+    font-family: 'Outfit', sans-serif;
     overflow-x: hidden;
+    cursor: none;
   }
 
+  /* NOISE OVERLAY */
   body::before {
     content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(84,197,248,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(84,197,248,0.03) 1px, transparent 1px);
-    background-size: 60px 60px;
-    pointer-events: none;
-    z-index: 0;
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0; opacity: 0.4;
   }
+
+  /* GRID */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(79,195,247,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,195,247,0.025) 1px, transparent 1px);
+    background-size: 80px 80px;
+    pointer-events: none; z-index: 0;
+  }
+
+  /* CURSOR */
+  #cursor {
+    position: fixed; width: 10px; height: 10px;
+    background: var(--accent); border-radius: 50%;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width .2s, height .2s, background .2s;
+    mix-blend-mode: screen;
+  }
+  #cursor-ring {
+    position: fixed; width: 40px; height: 40px;
+    border: 1.5px solid rgba(79,195,247,0.5);
+    border-radius: 50%;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform .08s ease, width .2s, height .2s;
+  }
+  body:has(a:hover) #cursor, body:has(button:hover) #cursor { width: 18px; height: 18px; background: white; }
+  body:has(a:hover) #cursor-ring, body:has(button:hover) #cursor-ring { width: 60px; height: 60px; }
 
   /* NAV */
   nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 60px;
-    background: rgba(5,10,14,0.88);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border);
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 64px;
+    background: rgba(6,8,16,0.85);
+    backdrop-filter: blur(20px) saturate(1.4);
+    border-bottom: 1px solid rgba(28,37,64,0.8);
   }
 
   .nav-logo {
-    font-family: 'Space Mono', monospace;
-    font-size: 13px;
-    color: var(--flutter-blue);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-
-  .nav-links {
-    display: flex;
-    gap: 36px;
-    list-style: none;
-  }
-
-  .nav-links a {
-    color: var(--muted);
-    text-decoration: none;
-    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px; font-weight: 700;
+    color: var(--accent);
     letter-spacing: 1px;
-    text-transform: uppercase;
-    font-family: 'Space Mono', monospace;
-    transition: color 0.2s;
+    display: flex; align-items: center; gap: 10px;
   }
 
-  .nav-links a:hover { color: var(--flutter-blue); }
+  .nav-logo .blink {
+    width: 7px; height: 7px;
+    background: var(--green); border-radius: 50%;
+    animation: blink 2s infinite;
+  }
 
-  /* HERO */
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  .nav-links { display: flex; gap: 40px; list-style: none; }
+  .nav-links a {
+    color: var(--muted); text-decoration: none;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+    transition: color .2s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -3px; left: 0; right: 0;
+    height: 1px; background: var(--accent);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform .2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+
+  /* ========== HERO ========== */
   .hero {
     min-height: 100vh;
-    display: flex;
-    align-items: center;
-    padding: 0 60px;
-    position: relative;
-    overflow: hidden;
+    display: flex; align-items: center;
+    padding: 100px 64px 60px;
+    position: relative; overflow: hidden;
   }
 
-  .hero-glow {
-    position: absolute;
-    right: -100px; top: 50%;
-    transform: translateY(-50%);
-    width: 700px; height: 700px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(1,180,228,0.10) 0%, transparent 70%);
+  .hero-orb1 {
+    position: absolute; right: -200px; top: -100px;
+    width: 800px; height: 800px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(124,77,255,0.12) 0%, transparent 65%);
     pointer-events: none;
+    animation: drift 14s ease-in-out infinite alternate;
   }
-
-  .hero-glow2 {
-    position: absolute;
-    left: -100px; bottom: -100px;
-    width: 400px; height: 400px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(1,117,194,0.07) 0%, transparent 70%);
+  .hero-orb2 {
+    position: absolute; left: -150px; bottom: -200px;
+    width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(79,195,247,0.08) 0%, transparent 65%);
     pointer-events: none;
+    animation: drift 18s ease-in-out infinite alternate-reverse;
   }
 
-  .hero-content { max-width: 820px; z-index: 1; }
+  @keyframes drift {
+    from { transform: translate(0,0) scale(1); }
+    to { transform: translate(40px,-30px) scale(1.05); }
+  }
 
-  .hero-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    color: var(--flutter-blue);
-    border: 1px solid rgba(84,197,248,0.3);
-    padding: 7px 18px;
-    letter-spacing: 3px;
+  .hero-content { max-width: 800px; z-index: 1; }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(0,230,118,0.08);
+    border: 1px solid rgba(0,230,118,0.25);
+    color: var(--green);
+    padding: 7px 16px;
+    border-radius: 40px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; letter-spacing: 1.5px;
     text-transform: uppercase;
-    margin-bottom: 28px;
-    animation: fadeUp 0.8s ease both;
+    margin-bottom: 32px;
+    animation: fadeSlide .8s ease both;
   }
 
-  .hero-tag .dot {
+  .hero-badge .dot {
     width: 6px; height: 6px;
-    background: var(--flutter-blue);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-  }
-
-  @keyframes pulse {
-    0%,100% { opacity: 1; }
-    50% { opacity: 0.3; }
+    background: var(--green); border-radius: 50%;
+    animation: blink 1.5s infinite;
   }
 
   .hero-name {
-    font-size: clamp(56px, 9vw, 104px);
-    font-weight: 800;
-    line-height: 0.92;
-    letter-spacing: -3px;
-    margin-bottom: 28px;
-    animation: fadeUp 0.8s ease 0.1s both;
+    font-size: clamp(54px, 8.5vw, 110px);
+    font-weight: 900; line-height: .92;
+    letter-spacing: -4px;
+    margin-bottom: 24px;
+    animation: fadeSlide .8s ease .1s both;
   }
 
-  .hero-name .blue { color: var(--flutter-blue); }
-
-  .hero-sub {
-    font-size: 17px;
-    color: var(--muted);
-    line-height: 1.75;
-    max-width: 540px;
-    margin-bottom: 20px;
-    animation: fadeUp 0.8s ease 0.2s both;
+  .hero-name .gradient {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 60%, var(--accent3) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
-  .hero-meta {
-    display: flex;
-    gap: 24px;
-    flex-wrap: wrap;
+  .hero-desc {
+    font-size: 18px; font-weight: 300; color: var(--muted);
+    line-height: 1.8; max-width: 520px;
+    margin-bottom: 16px;
+    animation: fadeSlide .8s ease .18s both;
+  }
+
+  .hero-chips {
+    display: flex; flex-wrap: wrap; gap: 10px;
     margin-bottom: 44px;
-    animation: fadeUp 0.8s ease 0.25s both;
+    animation: fadeSlide .8s ease .24s both;
   }
 
-  .meta-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 1px;
+  .chip {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--card); border: 1px solid var(--border);
+    padding: 7px 14px; border-radius: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; color: var(--muted);
+    letter-spacing: .5px;
   }
 
-  .meta-item svg { color: var(--flutter-blue); }
+  .chip svg { color: var(--accent); flex-shrink: 0; }
 
   .hero-ctas {
-    display: flex;
-    gap: 14px;
-    flex-wrap: wrap;
-    animation: fadeUp 0.8s ease 0.3s both;
+    display: flex; gap: 14px; flex-wrap: wrap;
+    animation: fadeSlide .8s ease .3s both;
   }
 
-  .btn-primary {
-    background: var(--flutter-blue);
-    color: #050a0e;
-    padding: 14px 34px;
-    font-family: 'Space Mono', monospace;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
+  .btn-glow {
+    position: relative;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    color: #060810; font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
     text-decoration: none;
-    display: inline-block;
-    transition: all 0.2s;
-    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+    padding: 14px 32px;
+    border-radius: 6px;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: transform .2s, box-shadow .2s;
+    overflow: hidden;
   }
+  .btn-glow::before {
+    content: ''; position: absolute; inset: 0;
+    background: white; opacity: 0; transition: opacity .2s;
+  }
+  .btn-glow:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(79,195,247,0.3); }
+  .btn-glow:hover::before { opacity: .08; }
 
-  .btn-primary:hover { background: white; transform: translateY(-2px); }
-
-  .btn-secondary {
-    background: transparent;
-    color: var(--flutter-blue);
-    border: 1px solid rgba(84,197,248,0.35);
-    padding: 14px 34px;
-    font-family: 'Space Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
+  .btn-outline {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--text); font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px; letter-spacing: 1px; text-transform: uppercase;
     text-decoration: none;
-    display: inline-block;
-    transition: all 0.2s;
+    padding: 14px 32px; border-radius: 6px;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: all .2s;
   }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); background: rgba(79,195,247,.05); }
 
-  .btn-secondary:hover {
-    border-color: var(--flutter-blue);
-    background: rgba(84,197,248,0.06);
-  }
-
-  /* Flutter diamond */
-  .flutter-diamond {
-    position: absolute;
-    right: 60px; top: 50%;
+  /* FLOATING FLUTTER LOGO */
+  .flutter-float {
+    position: absolute; right: 80px; top: 50%;
     transform: translateY(-50%);
-    width: 300px; height: 300px;
-    opacity: 0.07;
-    animation: float 7s ease-in-out infinite;
+    animation: floatLogo 8s ease-in-out infinite;
+    opacity: .12;
+    z-index: 1;
   }
 
-  @keyframes float {
-    0%,100% { transform: translateY(-50%) rotate(0deg); }
-    50% { transform: translateY(-54%) rotate(4deg); }
+  @keyframes floatLogo {
+    0%,100% { transform: translateY(-50%) rotate(-5deg); }
+    50% { transform: translateY(-56%) rotate(5deg); }
   }
 
-  /* STATS */
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+  /* ========== STATS BAR ========== */
+  .stats-bar {
+    display: grid; grid-template-columns: repeat(4,1fr);
     border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
     position: relative; z-index: 1;
   }
 
-  .stat {
-    padding: 40px 48px;
+  .stat-cell {
+    padding: 36px 48px;
     border-right: 1px solid var(--border);
-    transition: background 0.3s;
+    position: relative; overflow: hidden;
+    transition: background .3s;
+  }
+  .stat-cell:last-child { border-right: none; }
+  .stat-cell:hover { background: rgba(79,195,247,.03); }
+  .stat-cell::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform: scaleX(0); transform-origin: left;
+    transition: transform .4s;
+  }
+  .stat-cell:hover::before { transform: scaleX(1); }
+
+  .stat-val {
+    font-size: 48px; font-weight: 900;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1; margin-bottom: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .stat-lbl {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 2px;
   }
 
-  .stat:last-child { border-right: none; }
-  .stat:hover { background: rgba(84,197,248,0.03); }
+  /* ========== SECTION HEADERS ========== */
+  .sec-wrap { position: relative; z-index: 1; }
 
-  .stat-num {
-    font-family: 'Space Mono', monospace;
-    font-size: 46px;
-    font-weight: 700;
-    color: var(--flutter-blue);
-    line-height: 1;
-    margin-bottom: 8px;
-  }
-
-  .stat-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-  }
-
-  /* SECTIONS */
-  section { position: relative; z-index: 1; }
-
-  .sec-head {
-    padding: 80px 60px 40px;
-    display: flex;
-    align-items: baseline;
-    gap: 20px;
+  .sec-hd {
+    padding: 80px 64px 44px;
     border-bottom: 1px solid var(--border);
+    display: flex; align-items: baseline; gap: 16px;
   }
 
   .sec-num {
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    color: var(--flutter-blue);
-    letter-spacing: 2px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px; color: var(--accent2);
+    letter-spacing: 2px; opacity: .7;
   }
 
   .sec-title {
-    font-size: clamp(30px, 5vw, 52px);
-    font-weight: 800;
-    letter-spacing: -1px;
+    font-size: clamp(32px, 4.5vw, 56px);
+    font-weight: 900; letter-spacing: -1.5px;
   }
 
-  /* EXPERIENCE */
-  .exp-list { }
-
+  /* ========== EXPERIENCE ========== */
   .exp-item {
-    display: grid;
-    grid-template-columns: 240px 1fr;
+    display: grid; grid-template-columns: 260px 1fr;
     border-bottom: 1px solid var(--border);
-    transition: background 0.3s;
+    transition: background .3s;
   }
+  .exp-item:hover { background: rgba(79,195,247,.02); }
 
-  .exp-item:hover { background: rgba(84,197,248,0.025); }
-
-  .exp-left {
-    padding: 48px 48px 48px 60px;
+  .exp-meta {
+    padding: 52px 52px 52px 64px;
     border-right: 1px solid var(--border);
   }
 
-  .exp-company {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    color: var(--flutter-blue);
+  .exp-co {
+    font-size: 17px; font-weight: 700; color: var(--accent);
+    margin-bottom: 10px;
   }
 
   .exp-period {
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 1px;
-    margin-bottom: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; color: var(--muted);
+    letter-spacing: 1px; margin-bottom: 6px;
   }
 
-  .exp-location {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 1px;
+  .exp-loc {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; color: var(--muted); opacity: .7;
   }
 
-  .exp-right {
-    padding: 48px 60px;
-  }
+  .exp-body { padding: 52px 64px; }
 
   .exp-role {
-    font-size: 22px;
-    font-weight: 700;
-    margin-bottom: 20px;
-    letter-spacing: -0.5px;
+    font-size: 24px; font-weight: 800;
+    letter-spacing: -.5px; margin-bottom: 22px;
   }
 
-  .exp-bullets {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+  .exp-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .exp-list li {
+    font-size: 14px; color: var(--muted); line-height: 1.75;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .exp-list li::before {
+    content: '▸'; color: var(--accent); flex-shrink: 0;
+    margin-top: 1px; font-size: 12px;
   }
 
-  .exp-bullets li {
-    font-size: 14px;
-    color: var(--muted);
-    line-height: 1.7;
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-  }
-
-  .exp-bullets li::before {
-    content: '—';
-    color: var(--flutter-blue);
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-
-  /* SKILLS */
+  /* ========== SKILLS ========== */
   .skills-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: grid; grid-template-columns: repeat(3,1fr);
     border-top: 1px solid var(--border);
   }
 
@@ -378,321 +365,285 @@
     padding: 44px 52px;
     border-right: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
-    position: relative;
-    overflow: hidden;
-    transition: background 0.3s;
+    position: relative; overflow: hidden;
+    transition: background .3s;
+  }
+  .skill-card:hover { background: rgba(79,195,247,.025); }
+
+  .sk-icon {
+    font-size: 26px; margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
   }
 
-  .skill-card::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--flutter-blue);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.3s;
+  .sk-name { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+
+  .sk-desc { font-size: 13px; color: var(--muted); line-height: 1.7; margin-bottom: 16px; }
+
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px; color: var(--accent);
+    border: 1px solid rgba(79,195,247,0.22);
+    background: rgba(79,195,247,0.04);
+    padding: 4px 10px; letter-spacing: 1px; text-transform: uppercase;
+    border-radius: 3px;
   }
 
-  .skill-card:hover { background: rgba(84,197,248,0.03); }
-  .skill-card:hover::after { transform: scaleX(1); }
+  /* ========== PUBLISHED APPS ========== */
+  .apps-grid {
+    display: grid; grid-template-columns: repeat(2,1fr);
+    gap: 2px; background: var(--border);
+    border-top: 1px solid var(--border);
+  }
 
-  .skill-icon {
-    font-size: 28px;
+  .app-card {
+    background: var(--bg); padding: 44px 52px;
+    position: relative; overflow: hidden;
+    transition: background .3s;
+    text-decoration: none; color: inherit;
+  }
+  .app-card:hover { background: var(--card); }
+
+  .app-card::before {
+    content: ''; position: absolute;
+    left: 0; top: 0; bottom: 0; width: 3px;
+    background: linear-gradient(180deg, var(--accent), var(--accent2));
+    transform: scaleY(0); transform-origin: top;
+    transition: transform .35s;
+  }
+  .app-card:hover::before { transform: scaleY(1); }
+
+  .app-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+
+  .app-icon { font-size: 38px; line-height: 1; }
+
+  .app-store-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .store-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 5px 10px; border-radius: 4px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px; color: var(--muted);
+    letter-spacing: .5px; text-transform: uppercase;
+    text-decoration: none;
+    transition: all .2s;
+  }
+  .store-badge:hover { border-color: var(--accent); color: var(--accent); }
+  .store-badge.live { border-color: rgba(0,230,118,.3); color: var(--green); }
+
+  .app-name {
+    font-size: 22px; font-weight: 800; letter-spacing: -.5px;
+    margin-bottom: 10px;
+  }
+
+  .app-desc { font-size: 13px; color: var(--muted); line-height: 1.75; margin-bottom: 18px; }
+
+  .app-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+  .app-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px; padding: 4px 10px;
+    background: rgba(124,77,255,0.1);
+    border: 1px solid rgba(124,77,255,0.25);
+    color: #b39ddb; letter-spacing: 1px; text-transform: uppercase;
+    border-radius: 3px;
+  }
+
+  /* ========== MORE PROJECTS ========== */
+  .projects-list { border-top: 1px solid var(--border); }
+
+  .proj-row {
+    display: grid; grid-template-columns: 64px 1fr auto;
+    gap: 28px; align-items: start;
+    padding: 40px 64px;
+    border-bottom: 1px solid var(--border);
+    transition: background .25s;
+  }
+  .proj-row:hover { background: rgba(79,195,247,.02); }
+
+  .proj-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; color: var(--border);
+    padding-top: 4px; font-weight: 700;
+  }
+
+  .proj-title {
+    font-size: 22px; font-weight: 800; letter-spacing: -.4px;
+    margin-bottom: 8px;
+    transition: color .2s;
+  }
+  .proj-row:hover .proj-title { color: var(--accent); }
+
+  .proj-desc { font-size: 13px; color: var(--muted); line-height: 1.75; margin-bottom: 14px; max-width: 620px; }
+
+  .proj-badges { display: flex; gap: 7px; flex-wrap: wrap; }
+  .pb {
+    font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+    padding: 4px 10px; background: rgba(0,229,255,0.07);
+    border: 1px solid rgba(0,229,255,0.18); color: var(--accent3);
+    letter-spacing: 1px; text-transform: uppercase; border-radius: 3px;
+  }
+
+  .proj-arrow { font-size: 22px; opacity: .2; padding-top: 2px; transition: opacity .2s, color .2s; }
+  .proj-row:hover .proj-arrow { opacity: 1; color: var(--accent); }
+
+  /* ========== TECH MARQUEE ========== */
+  .marquee-section {
+    padding: 72px 0; border-top: 1px solid var(--border);
+    overflow: hidden; position: relative; z-index: 1;
+  }
+
+  .marquee-label {
+    padding: 0 64px 32px;
+    display: flex; align-items: baseline; gap: 16px;
+  }
+
+  .marquee-track {
+    display: flex; width: max-content;
+    animation: marqueeScroll 24s linear infinite;
+  }
+  .marquee-track:hover { animation-play-state: paused; }
+
+  @keyframes marqueeScroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  .m-pill {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 28px;
+    border: 1px solid var(--border); border-right: none;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px; color: var(--muted); letter-spacing: 1px;
+    white-space: nowrap;
+    transition: color .2s, background .2s;
+  }
+  .m-pill:hover { color: var(--accent); background: rgba(79,195,247,.04); }
+  .m-pill .dot { width: 5px; height: 5px; background: var(--accent2); border-radius: 50%; }
+
+  /* ========== CONTACT ========== */
+  .contact-wrap {
+    padding: 100px 64px;
+    border-top: 1px solid var(--border);
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+    align-items: start;
+    position: relative; z-index: 1;
+  }
+
+  .contact-heading {
+    font-size: clamp(38px, 5vw, 68px);
+    font-weight: 900; letter-spacing: -2px; line-height: 1;
     margin-bottom: 18px;
   }
 
-  .skill-name {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 10px;
+  .contact-heading .grad {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   }
 
-  .skill-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 7px;
-    margin-top: 16px;
-  }
-
-  .tag {
-    font-family: 'Space Mono', monospace;
-    font-size: 9px;
-    color: var(--flutter-blue);
-    border: 1px solid rgba(84,197,248,0.25);
-    padding: 4px 10px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-
-  /* PROJECTS */
-  .projects-list { border-top: 1px solid var(--border); }
-
-  .proj-item {
-    display: grid;
-    grid-template-columns: 70px 1fr auto;
-    align-items: start;
-    padding: 44px 60px;
-    border-bottom: 1px solid var(--border);
-    gap: 36px;
-    text-decoration: none;
-    color: inherit;
-    transition: background 0.3s;
-    cursor: default;
-  }
-
-  .proj-item:hover { background: rgba(84,197,248,0.03); }
-
-  .proj-num {
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    padding-top: 5px;
-  }
-
-  .proj-info h3 {
-    font-size: 24px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    margin-bottom: 10px;
-    transition: color 0.2s;
-  }
-
-  .proj-item:hover h3 { color: var(--flutter-blue); }
-
-  .proj-info p {
-    font-size: 14px;
-    color: var(--muted);
-    line-height: 1.75;
-    max-width: 640px;
-    margin-bottom: 14px;
-  }
-
-  .proj-tags { display: flex; gap: 8px; flex-wrap: wrap; }
-
-  .p-tag {
-    font-family: 'Space Mono', monospace;
-    font-size: 9px;
-    padding: 4px 10px;
-    background: rgba(1,117,194,0.15);
-    border: 1px solid rgba(1,180,228,0.2);
-    color: var(--flutter-cyan);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-
-  .proj-icon {
-    font-size: 22px;
-    padding-top: 2px;
-    opacity: 0.3;
-    transition: opacity 0.3s;
-  }
-
-  .proj-item:hover .proj-icon { opacity: 1; }
-
-  /* STACK MARQUEE */
-  .stack-section {
-    padding: 80px 60px;
-    border-top: 1px solid var(--border);
-  }
-
-  .stack-inner { padding: 0; }
-
-  .marquee-wrap { overflow: hidden; margin-top: 48px; }
-
-  .marquee {
-    display: flex;
-    width: max-content;
-    animation: scroll 22s linear infinite;
-  }
-
-  .m-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 18px 36px;
-    border: 1px solid var(--border);
-    border-right: none;
-    white-space: nowrap;
-    font-family: 'Space Mono', monospace;
-    font-size: 12px;
-    color: var(--muted);
-    letter-spacing: 1px;
-    transition: color 0.2s, background 0.2s;
-  }
-
-  .m-item:hover { color: var(--flutter-blue); background: rgba(84,197,248,0.04); }
-
-  .m-dot {
-    width: 5px; height: 5px;
-    background: var(--flutter-blue);
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
-  @keyframes scroll {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
-
-  /* CONTACT */
-  .contact {
-    padding: 100px 60px;
-    border-top: 1px solid var(--border);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: start;
-  }
-
-  .contact-left h2 {
-    font-size: clamp(38px, 5.5vw, 68px);
-    font-weight: 800;
-    letter-spacing: -2px;
-    line-height: 1;
-    margin-bottom: 20px;
-  }
-
-  .contact-left h2 .blue { color: var(--flutter-blue); }
-
-  .contact-left p {
-    font-size: 15px;
-    color: var(--muted);
-    line-height: 1.8;
-    margin-bottom: 36px;
-  }
+  .contact-sub { font-size: 15px; color: var(--muted); line-height: 1.8; margin-bottom: 40px; }
 
   .contact-links { display: flex; flex-direction: column; }
-
-  .c-link {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 18px 0;
-    border-bottom: 1px solid var(--border);
-    color: var(--text);
-    text-decoration: none;
-    font-size: 15px;
-    font-weight: 600;
-    transition: color 0.2s;
+  .c-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 0; border-bottom: 1px solid var(--border);
+    text-decoration: none; color: var(--text);
+    font-size: 15px; font-weight: 600;
+    transition: color .2s;
+  }
+  .c-row:hover { color: var(--accent); }
+  .c-row-lbl {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; color: var(--muted); letter-spacing: 1px;
   }
 
-  .c-link:hover { color: var(--flutter-blue); }
-
-  .c-link-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 1px;
-  }
-
-  .contact-form {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
+  .contact-form { display: flex; flex-direction: column; gap: 14px; }
 
   label {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 2px;
-    text-transform: uppercase;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; color: var(--muted);
+    letter-spacing: 2px; text-transform: uppercase;
+    display: block; margin-bottom: 6px;
   }
-
-  .form-group { display: flex; flex-direction: column; gap: 7px; }
 
   input, textarea {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 13px 16px;
-    font-family: 'Syne', sans-serif;
-    font-size: 14px;
-    outline: none;
-    transition: border-color 0.2s;
-    resize: none;
-    width: 100%;
+    width: 100%; background: var(--card); border: 1px solid var(--border);
+    color: var(--text); padding: 13px 16px; border-radius: 6px;
+    font-family: 'Outfit', sans-serif; font-size: 14px;
+    outline: none; resize: none;
+    transition: border-color .2s, box-shadow .2s;
   }
-
-  input:focus, textarea:focus { border-color: var(--flutter-blue); }
-  input::placeholder, textarea::placeholder { color: var(--muted); }
+  input:focus, textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(79,195,247,.1);
+  }
+  input::placeholder, textarea::placeholder { color: var(--muted); opacity: .6; }
   textarea { min-height: 110px; }
 
-  /* FOOTER */
+  /* ========== FOOTER ========== */
   footer {
-    padding: 28px 60px;
+    padding: 24px 64px;
     border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: flex; justify-content: space-between; align-items: center;
+    position: relative; z-index: 1;
+  }
+  footer p { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--muted); }
+
+  .footer-right {
+    display: flex; align-items: center; gap: 8px;
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--muted);
   }
 
-  footer p {
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-  }
-
-  .footer-flutter {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-  }
-
-  /* ANIMATIONS */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
+  /* FADE ANIMATIONS */
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
-  .fi {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
+  .reveal {
+    opacity: 0; transform: translateY(28px);
+    transition: opacity .65s ease, transform .65s ease;
   }
-
-  .fi.on { opacity: 1; transform: translateY(0); }
-
-  /* CURSOR */
-  .cur { width: 8px; height: 8px; background: var(--flutter-blue); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; mix-blend-mode: difference; }
-  .cur-ring { width: 34px; height: 34px; border: 1px solid rgba(84,197,248,0.45); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transition: transform 0.15s ease, width 0.2s, height 0.2s; transform: translate(-13px,-13px); }
+  .reveal.vis { opacity: 1; transform: translateY(0); }
 
   /* RESPONSIVE */
   @media (max-width: 900px) {
-    nav { padding: 18px 24px; }
+    nav { padding: 16px 24px; }
     .nav-links { display: none; }
-    .hero { padding: 120px 24px 60px; }
-    .flutter-diamond { display: none; }
-    .stats { grid-template-columns: repeat(2,1fr); }
-    .stat { padding: 28px 24px; }
-    .sec-head { padding: 60px 24px 32px; }
+    .hero { padding: 100px 24px 60px; }
+    .flutter-float { display: none; }
+    .stats-bar { grid-template-columns: repeat(2,1fr); }
+    .stat-cell { padding: 28px 24px; }
+    .sec-hd { padding: 60px 24px 36px; }
     .exp-item { grid-template-columns: 1fr; }
-    .exp-left { padding: 36px 24px 0; border-right: none; border-bottom: 1px solid var(--border); }
-    .exp-right { padding: 28px 24px 40px; }
+    .exp-meta { padding: 36px 24px 0; border-right: none; border-bottom: 1px solid var(--border); }
+    .exp-body { padding: 28px 24px 40px; }
     .skills-grid { grid-template-columns: 1fr; }
     .skill-card { padding: 36px 24px; }
-    .proj-item { padding: 32px 24px; grid-template-columns: 50px 1fr auto; gap: 14px; }
-    .stack-section { padding: 60px 24px; }
-    .contact { grid-template-columns: 1fr; padding: 60px 24px; gap: 40px; }
-    footer { padding: 20px 24px; flex-direction: column; gap: 10px; text-align: center; }
+    .apps-grid { grid-template-columns: 1fr; }
+    .app-card { padding: 36px 24px; }
+    .proj-row { padding: 32px 24px; grid-template-columns: 44px 1fr 20px; gap: 12px; }
+    .marquee-label { padding: 0 24px 28px; }
+    .contact-wrap { grid-template-columns: 1fr; padding: 60px 24px; gap: 48px; }
+    footer { padding: 20px 24px; flex-direction: column; gap: 10px; }
   }
 </style>
 </head>
 <body>
 
-<div class="cur" id="cur"></div>
-<div class="cur-ring" id="ring"></div>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo">// Hazem.dev</div>
+  <div class="nav-logo">
+    <div class="blink"></div>
+    Hazem.dev
+  </div>
   <ul class="nav-links">
     <li><a href="#experience">Experience</a></li>
     <li><a href="#skills">Skills</a></li>
+    <li><a href="#published">Published Apps</a></li>
     <li><a href="#projects">Projects</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
@@ -700,411 +651,503 @@
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-glow"></div>
-  <div class="hero-glow2"></div>
+  <div class="hero-orb1"></div>
+  <div class="hero-orb2"></div>
 
-  <svg class="flutter-diamond" viewBox="0 0 202 202" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <polygon points="101,10 192,101 101,192 10,101" fill="#54c5f8" opacity="0.6"/>
-    <polygon points="101,45 175,101 101,157 27,101" fill="#01b4e4" opacity="0.5"/>
-    <polygon points="101,75 145,101 101,127 57,101" fill="white" opacity="0.8"/>
+  <svg class="flutter-float" width="320" height="320" viewBox="0 0 202 202" fill="none">
+    <polygon points="101,8 194,101 101,194 8,101" fill="url(#g1)"/>
+    <polygon points="101,45 165,101 101,157 37,101" fill="url(#g2)"/>
+    <polygon points="101,78 138,101 101,124 64,101" fill="white"/>
+    <defs>
+      <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#4fc3f7"/>
+        <stop offset="100%" stop-color="#7c4dff"/>
+      </linearGradient>
+      <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#01b4e4"/>
+        <stop offset="100%" stop-color="#5e35b1"/>
+      </linearGradient>
+    </defs>
   </svg>
 
   <div class="hero-content">
-    <div class="hero-tag">
+    <div class="hero-badge">
       <span class="dot"></span>
       Available for Work
     </div>
     <h1 class="hero-name">
       Hazem<br>
-      <span class="blue">Gomaa.</span>
+      <span class="gradient">Gomaa.</span>
     </h1>
-    <p class="hero-sub">
-      Flutter Developer building modern, responsive mobile apps with Dart, Firebase, and REST APIs. 
-      Focused on clean code, great UI, and reliable performance.
+    <p class="hero-desc">
+      Flutter Developer crafting cross-platform mobile apps — from pixel-perfect UI to real-time backends. 4+ years shipping production apps on Google Play & App Store.
     </p>
-    <div class="hero-meta">
-      <div class="meta-item">
-        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+    <div class="hero-chips">
+      <div class="chip">
+        <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
         Bani Suef, Egypt
       </div>
-      <div class="meta-item">
-        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-        Computer Science Graduate
+      <div class="chip">
+        <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        CS Graduate · Beni Suef University
       </div>
-      <div class="meta-item">
-        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-        Flutter & Dart Expert
+      <div class="chip">
+        <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        Flutter & Dart
       </div>
     </div>
     <div class="hero-ctas">
-      <a href="#projects" class="btn-primary">View Projects</a>
-      <a href="https://github.com/hazemgom" target="_blank" class="btn-secondary">GitHub ↗</a>
+      <a href="#published" class="btn-glow">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        Published Apps
+      </a>
+      <a href="https://github.com/hazemgom" target="_blank" class="btn-outline">
+        GitHub ↗
+      </a>
+      <a href="#contact" class="btn-outline">Hire Me</a>
     </div>
   </div>
 </section>
 
 <!-- STATS -->
-<div class="stats">
-  <div class="stat fi">
-    <div class="stat-num">4+</div>
-    <div class="stat-label">Years Flutter</div>
+<div class="stats-bar">
+  <div class="stat-cell reveal">
+    <div class="stat-val">4+</div>
+    <div class="stat-lbl">Years Flutter</div>
   </div>
-  <div class="stat fi">
-    <div class="stat-num">7</div>
-    <div class="stat-label">Apps Shipped</div>
+  <div class="stat-cell reveal">
+    <div class="stat-val">10+</div>
+    <div class="stat-lbl">Apps Shipped</div>
   </div>
-  <div class="stat fi">
-    <div class="stat-num">3</div>
-    <div class="stat-label">Companies</div>
+  <div class="stat-cell reveal">
+    <div class="stat-val">3</div>
+    <div class="stat-lbl">Companies</div>
   </div>
-  <div class="stat fi">
-    <div class="stat-num">∞</div>
-    <div class="stat-label">Lines of Dart</div>
+  <div class="stat-cell reveal">
+    <div class="stat-val">10K+</div>
+    <div class="stat-lbl">Live Users</div>
   </div>
 </div>
 
 <!-- EXPERIENCE -->
-<section id="experience">
-  <div class="sec-head fi">
+<section id="experience" class="sec-wrap">
+  <div class="sec-hd reveal">
     <span class="sec-num">01 //</span>
     <h2 class="sec-title">Experience</h2>
   </div>
-  <div class="exp-list">
 
-    <div class="exp-item fi">
-      <div class="exp-left">
-        <div class="exp-company">Syntax Software</div>
-        <div class="exp-period">Aug 2023 – Present</div>
-        <div class="exp-location">📍 Bani Suef</div>
-      </div>
-      <div class="exp-right">
-        <div class="exp-role">Flutter Developer</div>
-        <ul class="exp-bullets">
-          <li>Collaborated with cross-functional teams using Agile methodologies</li>
-          <li>Implemented version control using Git and GitHub across multiple projects</li>
-          <li>Optimized app performance for better user experience and lower load times</li>
-          <li>Debugged and resolved complex technical issues at the platform level</li>
-        </ul>
-      </div>
+  <div class="exp-item reveal">
+    <div class="exp-meta">
+      <div class="exp-co">Syntax Software</div>
+      <div class="exp-period">Aug 2023 — Present</div>
+      <div class="exp-loc">📍 Beni Suef</div>
     </div>
-
-    <div class="exp-item fi">
-      <div class="exp-left">
-        <div class="exp-company">Freelancer</div>
-        <div class="exp-period">May 2021 – Aug 2023</div>
-        <div class="exp-location">📍 Bani Suef</div>
-      </div>
-      <div class="exp-right">
-        <div class="exp-role">Flutter Developer</div>
-        <ul class="exp-bullets">
-          <li>Improved performance of existing software, helping organizations remain agile</li>
-          <li>Supported customer technology needs with software maintenance and recommendations</li>
-          <li>Designed, wrote, and maintained high-quality Flutter applications end-to-end</li>
-          <li>Analyzed user needs and software requirements against design vision</li>
-        </ul>
-      </div>
+    <div class="exp-body">
+      <div class="exp-role">Flutter Developer</div>
+      <ul class="exp-list">
+        <li>Optimized app startup time by 35% through lazy loading, image caching, and widget rebuild reduction.</li>
+        <li>Debugged and resolved 50+ critical production issues, cutting crash rates by 40% across two major apps.</li>
+        <li>Integrated third-party REST APIs and payment gateways supporting 10,000+ active users.</li>
+        <li>Implemented CI/CD pipelines for automated testing and deployment to Google Play & App Store.</li>
+        <li>Collaborated with cross-functional teams in Agile (Scrum) cycles, consistently hitting sprint goals.</li>
+      </ul>
     </div>
+  </div>
 
-    <div class="exp-item fi">
-      <div class="exp-left">
-        <div class="exp-company">Makank</div>
-        <div class="exp-period">Jun 2020 – Apr 2021</div>
-        <div class="exp-location">📍 Cairo</div>
-      </div>
-      <div class="exp-right">
-        <div class="exp-role">Flutter Developer</div>
-        <ul class="exp-bullets">
-          <li>Developed and deployed mobile apps using Flutter and Dart for production</li>
-          <li>Implemented state management using Provider and Riverpod</li>
-          <li>Integrated APIs and web services for seamless data exchange</li>
-          <li>Utilized Firebase for authentication, analytics, and real-time database</li>
-        </ul>
-      </div>
+  <div class="exp-item reveal">
+    <div class="exp-meta">
+      <div class="exp-co">Freelancer</div>
+      <div class="exp-period">May 2021 — Aug 2023</div>
+      <div class="exp-loc">📍 Beni Suef</div>
     </div>
+    <div class="exp-body">
+      <div class="exp-role">Flutter Developer</div>
+      <ul class="exp-list">
+        <li>Designed, developed, and delivered 7+ full-featured mobile applications end-to-end for clients across multiple industries.</li>
+        <li>Built scalable codebases using Clean Architecture, BLoC, and Riverpod patterns.</li>
+        <li>Integrated Firebase services (Auth, Firestore, FCM) and REST APIs for real-time data.</li>
+        <li>Achieved 100% client satisfaction rate through ongoing maintenance and consultation.</li>
+      </ul>
+    </div>
+  </div>
 
+  <div class="exp-item reveal">
+    <div class="exp-meta">
+      <div class="exp-co">Makank</div>
+      <div class="exp-period">Jun 2020 — Apr 2021</div>
+      <div class="exp-loc">📍 Cairo</div>
+    </div>
+    <div class="exp-body">
+      <div class="exp-role">Flutter Developer</div>
+      <ul class="exp-list">
+        <li>Developed and deployed cross-platform mobile apps using Flutter and Dart from scratch to production.</li>
+        <li>Implemented state management using Provider and Riverpod for 3 client-facing applications.</li>
+        <li>Integrated RESTful APIs enabling seamless data exchange between mobile clients and backend.</li>
+        <li>Utilized Firebase Authentication and Analytics for user onboarding and performance monitoring.</li>
+      </ul>
+    </div>
   </div>
 </section>
 
 <!-- SKILLS -->
-<section id="skills">
-  <div class="sec-head fi">
+<section id="skills" class="sec-wrap">
+  <div class="sec-hd reveal">
     <span class="sec-num">02 //</span>
     <h2 class="sec-title">Skills</h2>
   </div>
   <div class="skills-grid">
-    <div class="skill-card fi">
-      <div class="skill-icon">📱</div>
-      <div class="skill-name">Flutter & Dart</div>
-      <p style="font-size:14px;color:var(--muted);line-height:1.7;">Building beautiful, high-performance cross-platform apps with custom widgets, animations, and platform-specific code.</p>
-      <div class="skill-tags">
+    <div class="skill-card reveal">
+      <div class="sk-icon">📱</div>
+      <div class="sk-name">Flutter & Dart</div>
+      <p class="sk-desc">High-performance cross-platform apps with custom widgets, animations, and platform-specific code for Android, iOS & Web.</p>
+      <div class="tags">
         <span class="tag">Flutter</span><span class="tag">Dart</span><span class="tag">OOP</span><span class="tag">Clean Arch</span>
       </div>
     </div>
-    <div class="skill-card fi">
-      <div class="skill-icon">🔄</div>
-      <div class="skill-name">State Management</div>
-      <p style="font-size:14px;color:var(--muted);line-height:1.7;">Scalable app architecture using modern state management patterns for complex, reactive UIs.</p>
-      <div class="skill-tags">
-        <span class="tag">Riverpod</span><span class="tag">Provider</span><span class="tag">BLoC</span><span class="tag">GetX</span>
+    <div class="skill-card reveal">
+      <div class="sk-icon">🔄</div>
+      <div class="sk-name">State Management</div>
+      <p class="sk-desc">Scalable, reactive UI architecture using industry-standard state management patterns for complex apps.</p>
+      <div class="tags">
+        <span class="tag">Riverpod</span><span class="tag">BLoC</span><span class="tag">Provider</span><span class="tag">GetX</span>
       </div>
     </div>
-    <div class="skill-card fi">
-      <div class="skill-icon">🔥</div>
-      <div class="skill-name">Firebase & Backend</div>
-      <p style="font-size:14px;color:var(--muted);line-height:1.7;">Authentication, Firestore, Cloud Functions, analytics, and real-time data integration with REST APIs.</p>
-      <div class="skill-tags">
-        <span class="tag">Firebase</span><span class="tag">REST API</span><span class="tag">Auth</span><span class="tag">Firestore</span>
+    <div class="skill-card reveal">
+      <div class="sk-icon">🔥</div>
+      <div class="sk-name">Firebase & APIs</div>
+      <p class="sk-desc">Auth, Firestore, Cloud Functions, FCM, analytics, real-time data, REST, Dio, and basic GraphQL integration.</p>
+      <div class="tags">
+        <span class="tag">Firebase</span><span class="tag">REST API</span><span class="tag">Dio</span><span class="tag">GraphQL</span>
       </div>
     </div>
-    <div class="skill-card fi">
-      <div class="skill-icon">💾</div>
-      <div class="skill-name">Storage</div>
-      <p style="font-size:14px;color:var(--muted);line-height:1.7;">Local persistence with Hive, SharedPreferences, and SQLite. Cloud sync with Firebase and Supabase.</p>
-      <div class="skill-tags">
-        <span class="tag">Local DB</span><span class="tag">Cloud DB</span><span class="tag">Hive</span><span class="tag">Shared Prefs</span>
+    <div class="skill-card reveal">
+      <div class="sk-icon">💾</div>
+      <div class="sk-name">Storage & Databases</div>
+      <p class="sk-desc">Local persistence with Hive, SQLite/Sqflite, SharedPrefs. Cloud sync with Firebase Storage and Supabase.</p>
+      <div class="tags">
+        <span class="tag">Hive</span><span class="tag">SQLite</span><span class="tag">Shared Prefs</span><span class="tag">Firebase</span>
       </div>
     </div>
-    <div class="skill-card fi">
-      <div class="skill-icon">🏗️</div>
-      <div class="skill-name">Clean Architecture</div>
-      <p style="font-size:14px;color:var(--muted);line-height:1.7;">Layered, testable architecture with separation of concerns. Domain, data, and presentation layers.</p>
-      <div class="skill-tags">
+    <div class="skill-card reveal">
+      <div class="sk-icon">🏗️</div>
+      <div class="sk-name">Clean Architecture</div>
+      <p class="sk-desc">Layered, testable design with strict separation of concerns — domain, data, and presentation layers with SOLID principles.</p>
+      <div class="tags">
         <span class="tag">MVVM</span><span class="tag">Repository</span><span class="tag">Use Cases</span><span class="tag">DI</span>
       </div>
     </div>
-    <div class="skill-card fi">
-      <div class="skill-icon">🔧</div>
-      <div class="skill-name">Dev Tools</div>
-      <p style="font-size:14px;color:var(--muted);line-height:1.7;">Version control, CI/CD, agile workflow. Profiling with Flutter DevTools and performance optimization.</p>
-      <div class="skill-tags">
-        <span class="tag">Git</span><span class="tag">GitHub</span><span class="tag">Agile</span><span class="tag">DevTools</span>
+    <div class="skill-card reveal">
+      <div class="sk-icon">🚀</div>
+      <div class="sk-name">CI/CD & Dev Tools</div>
+      <p class="sk-desc">Git, GitHub, CI/CD pipelines, Google Play Console, App Store Connect. Profiling with Flutter DevTools.</p>
+      <div class="tags">
+        <span class="tag">Git</span><span class="tag">CI/CD</span><span class="tag">Play Console</span><span class="tag">App Store</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- PROJECTS -->
-<section id="projects">
-  <div class="sec-head fi">
+<!-- PUBLISHED APPS -->
+<section id="published" class="sec-wrap">
+  <div class="sec-hd reveal">
     <span class="sec-num">03 //</span>
-    <h2 class="sec-title">Projects</h2>
+    <h2 class="sec-title">Published Apps</h2>
+  </div>
+
+  <div class="apps-grid">
+
+    <!-- Oferrta -->
+    <div class="app-card reveal">
+      <div class="app-header">
+        <div class="app-icon">🛒</div>
+        <div class="app-store-badges">
+          <a href="https://play.google.com/store/apps/details?id=com.mazadat.app" target="_blank" class="store-badge live">
+            ▶ Google Play
+          </a>
+          <a href="https://apps.apple.com/kr/app/oferrta/id6738061459" target="_blank" class="store-badge live">
+             App Store
+          </a>
+        </div>
+      </div>
+      <div class="app-name">Oferrta</div>
+      <p class="app-desc">A digital marketplace enabling individuals and companies to list products and services for sale, buy what they need, and participate in competitive auctions — available on both Android & iOS.</p>
+      <div class="app-tags">
+        <span class="app-tag">Flutter</span>
+        <span class="app-tag">Firebase</span>
+        <span class="app-tag">Auctions</span>
+        <span class="app-tag">E-Commerce</span>
+        <span class="app-tag">Payments</span>
+      </div>
+    </div>
+
+    <!-- CatPrice -->
+    <div class="app-card reveal">
+      <div class="app-header">
+        <div class="app-icon">⚙️</div>
+        <div class="app-store-badges">
+          <a href="https://play.google.com/store/apps/details?id=com.token.pricecat" target="_blank" class="store-badge live">
+            ▶ Google Play
+          </a>
+        </div>
+      </div>
+      <div class="app-name">CatPrice E-scrap</div>
+      <p class="app-desc">Specialized B2B tool with 18,000+ catalytic converter codes, electronics scrap pricing catalog, custom analysis saving, and subscription-based pricing intelligence for the recycling industry.</p>
+      <div class="app-tags">
+        <span class="app-tag">Flutter</span>
+        <span class="app-tag">REST API</span>
+        <span class="app-tag">Local DB</span>
+        <span class="app-tag">Subscriptions</span>
+        <span class="app-tag">B2B</span>
+      </div>
+    </div>
+
+    <!-- Flospaid -->
+    <div class="app-card reveal">
+      <div class="app-header">
+        <div class="app-icon">💳</div>
+        <div class="app-store-badges">
+          <a href="https://play.google.com/store/apps/details?id=com.flospaid.flos" target="_blank" class="store-badge live">
+            ▶ Google Play
+          </a>
+        </div>
+      </div>
+      <div class="app-name">Flos Paid</div>
+      <p class="app-desc">A fintech payment app providing seamless digital payment solutions — built with secure payment gateway integration, clean UX, and real-time transaction management.</p>
+      <div class="app-tags">
+        <span class="app-tag">Flutter</span>
+        <span class="app-tag">Payment Gateway</span>
+        <span class="app-tag">Firebase</span>
+        <span class="app-tag">FinTech</span>
+        <span class="app-tag">Security</span>
+      </div>
+    </div>
+
+    <!-- Placeholder 4th slot - Contact CTA -->
+    <div class="app-card reveal" style="background: linear-gradient(135deg, rgba(79,195,247,0.04), rgba(124,77,255,0.04)); border: 1px dashed rgba(79,195,247,0.2);">
+      <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; min-height: 220px;">
+        <div style="font-size:36px; margin-bottom:18px;">🚧</div>
+        <div style="font-size:20px; font-weight:800; margin-bottom:10px; letter-spacing:-.4px;">More Coming Soon</div>
+        <p style="font-size:13px; color:var(--muted); line-height:1.75; margin-bottom:20px;">Working on new projects. Have an idea? Let's build it together.</p>
+        <a href="#contact" class="btn-glow" style="font-size:11px; padding:10px 22px;">Get in Touch</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- MORE PROJECTS -->
+<section id="projects" class="sec-wrap">
+  <div class="sec-hd reveal">
+    <span class="sec-num">04 //</span>
+    <h2 class="sec-title">More Projects</h2>
   </div>
   <div class="projects-list">
 
-    <div class="proj-item fi">
+    <div class="proj-row reveal">
       <div class="proj-num">001</div>
-      <div class="proj-info">
-        <h3>Full Educational Application</h3>
-        <p>A comprehensive educational platform providing structured academic content for different educational levels, with organized learning experience and seamless access to study materials.</p>
-        <div class="proj-tags">
-          <span class="p-tag">Flutter</span><span class="p-tag">Firebase</span><span class="p-tag">REST API</span><span class="p-tag">Education</span>
-        </div>
+      <div>
+        <div class="proj-title">Full Educational Platform</div>
+        <p class="proj-desc">Comprehensive multi-level academic content platform with structured curricula, progress tracking, and role-based access for students and instructors. Deployed to Google Play.</p>
+        <div class="proj-badges"><span class="pb">Flutter</span><span class="pb">Firebase</span><span class="pb">BLoC</span><span class="pb">REST API</span><span class="pb">Education</span></div>
       </div>
-      <div class="proj-icon">📚</div>
+      <div class="proj-arrow">↗</div>
     </div>
 
-    <div class="proj-item fi">
+    <div class="proj-row reveal">
       <div class="proj-num">002</div>
-      <div class="proj-info">
-        <h3>Mental Health & Speech Therapy App</h3>
-        <p>An app supporting users facing psychological and speech-related challenges with guided sessions, interactive exercises, and progress tracking to improve well-being and communication skills.</p>
-        <div class="proj-tags">
-          <span class="p-tag">Flutter</span><span class="p-tag">Firebase</span><span class="p-tag">Health</span><span class="p-tag">Progress Tracking</span>
-        </div>
+      <div>
+        <div class="proj-title">Mental Health & Speech Therapy</div>
+        <p class="proj-desc">Wellness app with guided therapy sessions, interactive speech exercises, and progress tracking dashboards. Integrated push notifications for session reminders.</p>
+        <div class="proj-badges"><span class="pb">Flutter</span><span class="pb">Firebase</span><span class="pb">FCM</span><span class="pb">Riverpod</span><span class="pb">Health</span></div>
       </div>
-      <div class="proj-icon">🧠</div>
+      <div class="proj-arrow">↗</div>
     </div>
 
-    <div class="proj-item fi">
+    <div class="proj-row reveal">
       <div class="proj-num">003</div>
-      <div class="proj-info">
-        <h3>Real-Time Gold Prices & Investment</h3>
-        <p>A financial application delivering live gold price updates, enabling users to buy/sell gold bars and coins, and manage investment activities directly within the app.</p>
-        <div class="proj-tags">
-          <span class="p-tag">Flutter</span><span class="p-tag">Real-time</span><span class="p-tag">Payments</span><span class="p-tag">Finance</span>
-        </div>
+      <div>
+        <div class="proj-title">Real-Time Gold Investment</div>
+        <p class="proj-desc">Fintech app delivering live gold price feeds, enabling users to buy/sell gold bars and coins with secure in-app transactions and portfolio management.</p>
+        <div class="proj-badges"><span class="pb">Flutter</span><span class="pb">Firebase</span><span class="pb">REST API</span><span class="pb">Payment Gateway</span><span class="pb">FinTech</span></div>
       </div>
-      <div class="proj-icon">📈</div>
+      <div class="proj-arrow">↗</div>
     </div>
 
-    <div class="proj-item fi">
+    <div class="proj-row reveal">
       <div class="proj-num">004</div>
-      <div class="proj-info">
-        <h3>Full E-Commerce Application</h3>
-        <p>Complete online shopping app with product browsing, cart management, order placement, and secure online payments through an integrated payment system.</p>
-        <div class="proj-tags">
-          <span class="p-tag">Flutter</span><span class="p-tag">Payment Gateway</span><span class="p-tag">Firebase</span><span class="p-tag">E-Commerce</span>
-        </div>
+      <div>
+        <div class="proj-title">Real Estate Listing App</div>
+        <p class="proj-desc">Property listing platform with advanced search/filter, interactive Google Maps integration, and detailed property pages for rent and sale listings.</p>
+        <div class="proj-badges"><span class="pb">Flutter</span><span class="pb">Google Maps SDK</span><span class="pb">Firebase</span><span class="pb">Search & Filter</span></div>
       </div>
-      <div class="proj-icon">🛒</div>
+      <div class="proj-arrow">↗</div>
     </div>
 
-    <div class="proj-item fi">
+    <div class="proj-row reveal">
       <div class="proj-num">005</div>
-      <div class="proj-info">
-        <h3>Online Mobile Recharge Services</h3>
-        <p>Digital services app allowing users to recharge mobile balance, pay bills, and access telecom/online services quickly and securely with a streamlined user experience.</p>
-        <div class="proj-tags">
-          <span class="p-tag">Flutter</span><span class="p-tag">Telecom API</span><span class="p-tag">Payments</span><span class="p-tag">FinTech</span>
-        </div>
+      <div>
+        <div class="proj-title">Booking & Appointment Management</div>
+        <p class="proj-desc">Full scheduling system with calendar integration, real-time notifications, and booking history management for service-based businesses.</p>
+        <div class="proj-badges"><span class="pb">Flutter</span><span class="pb">Firebase</span><span class="pb">BLoC</span><span class="pb">Local Notifications</span></div>
       </div>
-      <div class="proj-icon">📲</div>
+      <div class="proj-arrow">↗</div>
     </div>
 
-    <div class="proj-item fi">
+    <div class="proj-row reveal">
       <div class="proj-num">006</div>
-      <div class="proj-info">
-        <h3>Real Estate Listing Application</h3>
-        <p>Property listing platform allowing users to browse, search, and filter real estate properties for sale or rent, with detailed property info and interactive user experience.</p>
-        <div class="proj-tags">
-          <span class="p-tag">Flutter</span><span class="p-tag">Maps</span><span class="p-tag">Search & Filter</span><span class="p-tag">Real Estate</span>
-        </div>
+      <div>
+        <div class="proj-title">Mobile Recharge & Bill Payment</div>
+        <p class="proj-desc">Digital services app enabling mobile top-up, utility bill payments, and telecom service management with secure payment flow and transaction history.</p>
+        <div class="proj-badges"><span class="pb">Flutter</span><span class="pb">REST API</span><span class="pb">Payment Integration</span><span class="pb">FinTech</span></div>
       </div>
-      <div class="proj-icon">🏠</div>
-    </div>
-
-    <div class="proj-item fi">
-      <div class="proj-num">007</div>
-      <div class="proj-info">
-        <h3>Booking & Appointment Management</h3>
-        <p>App enabling users to book appointments, manage schedules, receive notifications, and track booking history in an organized and efficient way.</p>
-        <div class="proj-tags">
-          <span class="p-tag">Flutter</span><span class="p-tag">Notifications</span><span class="p-tag">Firebase</span><span class="p-tag">Scheduling</span>
-        </div>
-      </div>
-      <div class="proj-icon">📅</div>
+      <div class="proj-arrow">↗</div>
     </div>
 
   </div>
 </section>
 
-<!-- TECH STACK -->
-<section>
-  <div class="stack-section">
-    <div style="display:flex;align-items:baseline;gap:20px;">
-      <span class="sec-num">04 //</span>
-      <h2 class="sec-title fi">Tech Stack</h2>
-    </div>
-    <div class="marquee-wrap">
-      <div class="marquee">
-        <div class="m-item"><span class="m-dot"></span>Flutter</div>
-        <div class="m-item"><span class="m-dot"></span>Dart</div>
-        <div class="m-item"><span class="m-dot"></span>Firebase</div>
-        <div class="m-item"><span class="m-dot"></span>Riverpod</div>
-        <div class="m-item"><span class="m-dot"></span>Provider</div>
-        <div class="m-item"><span class="m-dot"></span>BLoC</div>
-        <div class="m-item"><span class="m-dot"></span>GetX</div>
-        <div class="m-item"><span class="m-dot"></span>REST APIs</div>
-        <div class="m-item"><span class="m-dot"></span>Clean Architecture</div>
-        <div class="m-item"><span class="m-dot"></span>OOP</div>
-        <div class="m-item"><span class="m-dot"></span>Git & GitHub</div>
-        <div class="m-item"><span class="m-dot"></span>Local Storage</div>
-        <div class="m-item"><span class="m-dot"></span>Cloud Storage</div>
-        <div class="m-item"><span class="m-dot"></span>Agile</div>
-        <!-- duplicate -->
-        <div class="m-item"><span class="m-dot"></span>Flutter</div>
-        <div class="m-item"><span class="m-dot"></span>Dart</div>
-        <div class="m-item"><span class="m-dot"></span>Firebase</div>
-        <div class="m-item"><span class="m-dot"></span>Riverpod</div>
-        <div class="m-item"><span class="m-dot"></span>Provider</div>
-        <div class="m-item"><span class="m-dot"></span>BLoC</div>
-        <div class="m-item"><span class="m-dot"></span>GetX</div>
-        <div class="m-item"><span class="m-dot"></span>REST APIs</div>
-        <div class="m-item"><span class="m-dot"></span>Clean Architecture</div>
-        <div class="m-item"><span class="m-dot"></span>OOP</div>
-        <div class="m-item"><span class="m-dot"></span>Git & GitHub</div>
-        <div class="m-item"><span class="m-dot"></span>Local Storage</div>
-        <div class="m-item"><span class="m-dot"></span>Cloud Storage</div>
-        <div class="m-item"><span class="m-dot"></span>Agile</div>
-      </div>
+<!-- TECH MARQUEE -->
+<section class="marquee-section">
+  <div class="marquee-label">
+    <span class="sec-num">05 //</span>
+    <h2 class="sec-title reveal" style="font-size: clamp(24px,3vw,38px);">Tech Stack</h2>
+  </div>
+  <div style="overflow:hidden">
+    <div class="marquee-track">
+      <div class="m-pill"><span class="dot"></span>Flutter</div>
+      <div class="m-pill"><span class="dot"></span>Dart</div>
+      <div class="m-pill"><span class="dot"></span>Firebase</div>
+      <div class="m-pill"><span class="dot"></span>Riverpod</div>
+      <div class="m-pill"><span class="dot"></span>BLoC</div>
+      <div class="m-pill"><span class="dot"></span>Provider</div>
+      <div class="m-pill"><span class="dot"></span>GetX</div>
+      <div class="m-pill"><span class="dot"></span>REST APIs</div>
+      <div class="m-pill"><span class="dot"></span>Dio</div>
+      <div class="m-pill"><span class="dot"></span>Clean Architecture</div>
+      <div class="m-pill"><span class="dot"></span>MVVM</div>
+      <div class="m-pill"><span class="dot"></span>Google Maps SDK</div>
+      <div class="m-pill"><span class="dot"></span>Payment Gateway</div>
+      <div class="m-pill"><span class="dot"></span>Push Notifications</div>
+      <div class="m-pill"><span class="dot"></span>Git & GitHub</div>
+      <div class="m-pill"><span class="dot"></span>CI/CD</div>
+      <div class="m-pill"><span class="dot"></span>Hive</div>
+      <div class="m-pill"><span class="dot"></span>SQLite</div>
+      <div class="m-pill"><span class="dot"></span>Kotlin basics</div>
+      <div class="m-pill"><span class="dot"></span>Swift basics</div>
+      <!-- dup -->
+      <div class="m-pill"><span class="dot"></span>Flutter</div>
+      <div class="m-pill"><span class="dot"></span>Dart</div>
+      <div class="m-pill"><span class="dot"></span>Firebase</div>
+      <div class="m-pill"><span class="dot"></span>Riverpod</div>
+      <div class="m-pill"><span class="dot"></span>BLoC</div>
+      <div class="m-pill"><span class="dot"></span>Provider</div>
+      <div class="m-pill"><span class="dot"></span>GetX</div>
+      <div class="m-pill"><span class="dot"></span>REST APIs</div>
+      <div class="m-pill"><span class="dot"></span>Dio</div>
+      <div class="m-pill"><span class="dot"></span>Clean Architecture</div>
+      <div class="m-pill"><span class="dot"></span>MVVM</div>
+      <div class="m-pill"><span class="dot"></span>Google Maps SDK</div>
+      <div class="m-pill"><span class="dot"></span>Payment Gateway</div>
+      <div class="m-pill"><span class="dot"></span>Push Notifications</div>
+      <div class="m-pill"><span class="dot"></span>Git & GitHub</div>
+      <div class="m-pill"><span class="dot"></span>CI/CD</div>
+      <div class="m-pill"><span class="dot"></span>Hive</div>
+      <div class="m-pill"><span class="dot"></span>SQLite</div>
+      <div class="m-pill"><span class="dot"></span>Kotlin basics</div>
+      <div class="m-pill"><span class="dot"></span>Swift basics</div>
     </div>
   </div>
 </section>
 
 <!-- CONTACT -->
-<section id="contact">
-  <div class="contact">
-    <div class="contact-left fi">
-      <h2>Let's<br><span class="blue">Connect.</span></h2>
-      <p>Have a Flutter project or an opportunity? I'd love to hear from you. Available for freelance, full-time roles, and collaborations.</p>
+<section id="contact" class="sec-wrap">
+  <div class="contact-wrap">
+    <div class="reveal">
+      <h2 class="contact-heading">Let's<br><span class="grad">Connect.</span></h2>
+      <p class="contact-sub">Have a Flutter project or an exciting opportunity? Available for freelance, full-time, and collaboration — let's build something great.</p>
       <div class="contact-links">
-        <a href="mailto:hgomaa400@gmail.com" class="c-link">
+        <a href="mailto:hgomaa400@gmail.com" class="c-row">
           hgomaa400@gmail.com
-          <span class="c-link-label">Email ↗</span>
+          <span class="c-row-lbl">Email ↗</span>
         </a>
-        <a href="tel:+201003944851" class="c-link">
+        <a href="tel:+201003944851" class="c-row">
           +20 100 394 4851
-          <span class="c-link-label">Phone ↗</span>
+          <span class="c-row-lbl">Phone ↗</span>
         </a>
-        <a href="https://github.com/hazemgom" target="_blank" class="c-link">
+        <a href="https://github.com/hazemgom" target="_blank" class="c-row">
           github.com/hazemgom
-          <span class="c-link-label">GitHub ↗</span>
+          <span class="c-row-lbl">GitHub ↗</span>
         </a>
-        <a href="https://linkedin.com/in/hazem-gomaa-29aa27383" target="_blank" class="c-link">
+        <a href="https://linkedin.com/in/hazem-gomaa-29aa27383" target="_blank" class="c-row">
           linkedin.com/in/hazem-gomaa
-          <span class="c-link-label">LinkedIn ↗</span>
+          <span class="c-row-lbl">LinkedIn ↗</span>
         </a>
       </div>
     </div>
-    <div class="contact-form fi">
-      <div class="form-group">
+
+    <div class="contact-form reveal">
+      <div>
         <label>Your Name</label>
         <input type="text" placeholder="Ahmed Mohamed">
       </div>
-      <div class="form-group">
+      <div>
         <label>Email</label>
         <input type="email" placeholder="ahmed@company.com">
       </div>
-      <div class="form-group">
+      <div>
         <label>Message</label>
-        <textarea placeholder="Tell me about your project..."></textarea>
+        <textarea placeholder="Tell me about your project or opportunity..."></textarea>
       </div>
-      <button class="btn-primary" onclick="alert('Message sent! Hazem will get back to you soon. 🚀')">Send Message</button>
+      <button class="btn-glow" onclick="this.textContent='✅ Sent! Talk soon.'; setTimeout(()=>this.textContent='Send Message',3000)">
+        Send Message
+      </button>
     </div>
   </div>
 </section>
 
 <!-- FOOTER -->
 <footer>
-  <p>© 2025 Hazem Gomaa — Flutter Developer</p>
-  <div class="footer-flutter">
-    <svg width="18" height="18" viewBox="0 0 202 202" fill="none">
-      <polygon points="101,10 192,101 101,192 10,101" fill="#54c5f8" opacity="0.7"/>
-      <polygon points="101,55 150,101 101,147 52,101" fill="#01b4e4"/>
+  <p>© 2025 Hazem Gomaa · Flutter Developer</p>
+  <div class="footer-right">
+    <svg width="16" height="16" viewBox="0 0 202 202" fill="none">
+      <polygon points="101,8 194,101 101,194 8,101" fill="#4fc3f7" opacity=".8"/>
+      <polygon points="101,50 155,101 101,152 47,101" fill="#7c4dff"/>
     </svg>
-    Built with Flutter &amp; Dart spirit
+    Built for Flutter spirit
   </div>
 </footer>
 
 <script>
   // Cursor
-  const cur = document.getElementById('cur');
-  const ring = document.getElementById('ring');
-  let mx=0,my=0,rx=0,ry=0;
+  const cur = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
   document.addEventListener('mousemove', e => {
-    mx=e.clientX; my=e.clientY;
-    cur.style.left=mx-4+'px'; cur.style.top=my-4+'px';
-  });
-  function tick(){
-    rx+=(mx-rx-17)*0.12; ry+=(my-ry-17)*0.12;
-    ring.style.left=rx+'px'; ring.style.top=ry+'px';
-    requestAnimationFrame(tick);
-  } tick();
-  document.querySelectorAll('a,button').forEach(el=>{
-    el.addEventListener('mouseenter',()=>{ring.style.width='56px';ring.style.height='56px';ring.style.transform='translate(-28px,-28px)';});
-    el.addEventListener('mouseleave',()=>{ring.style.width='34px';ring.style.height='34px';ring.style.transform='translate(-13px,-13px)';});
+    mx = e.clientX; my = e.clientY;
+    cur.style.left = mx + 'px'; cur.style.top = my + 'px';
   });
 
-  // Fade in on scroll
-  const obs = new IntersectionObserver(entries=>{
-    entries.forEach((e,i)=>{
-      if(e.isIntersecting) setTimeout(()=>e.target.classList.add('on'), i*80);
+  function tick() {
+    rx += (mx - rx) * 0.1;
+    ry += (my - ry) * 0.1;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(tick);
+  }
+  tick();
+
+  // Scroll reveal
+  const revealObs = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('vis'), i * 70);
+        revealObs.unobserve(e.target);
+      }
     });
-  },{threshold:0.1});
-  document.querySelectorAll('.fi').forEach((el,i)=>{
-    el.style.transitionDelay=(i%5)*60+'ms';
-    obs.observe(el);
-  });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
 </script>
 </body>
 </html>
